@@ -220,7 +220,7 @@ export default function App() {
       <div className="min-h-screen text-gray-800 flex flex-col items-center justify-between p-6 select-none font-sans relative z-10">
         
         <header className="mt-8 text-center pointer-events-none">
-        <h1 className="text-4xl font-extralight tracking-[0.2em] text-black uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+        <h1 className="text-4xl font-extralight tracking-[0.2em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
           Neural<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Craft</span>
         </h1>
         <p className="text-xs text-blue-300/60 mt-2 tracking-widest uppercase">
