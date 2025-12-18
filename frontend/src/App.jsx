@@ -8,7 +8,7 @@ import { AuthPage } from './components/AuthPage';
 import { ElementCard } from './components/ElementCard';
 import { CraftingSlot } from './components/CraftingSlot';
 import { NeuralBackground } from './components/NeuralBackground';
-// import { Grimoire } from './components/Grimoire'; // 🟢 Optional: Commented out if you are using the grid below instead
+import { Grimoire } from './components/Grimoire'; // 🟢 Restored Import
 
 const API_URL = "https://neuralcraft-three.vercel.app";
 
@@ -31,8 +31,12 @@ export default function App() {
   const [session, setSession] = useState(null); 
   const [inventory, setInventory] = useState([]); 
   const [isLoading, setIsLoading] = useState(false);
+  
+  // 🟢 UI STATES
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState([]);
+  const [showGrimoire, setShowGrimoire] = useState(false); // 📖 Grimoire Toggle
+
   const [slots, setSlots] = useState({ slot1: null, slot2: null });
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeId, setActiveId] = useState(null);
@@ -227,9 +231,30 @@ export default function App() {
       <Toaster position="top-center" reverseOrder={false} />
       <NeuralBackground />
       
-      {/* 🟢 NAVIGATION: Top Right Controls */}
+      {/* 🟢 TOP LEFT: Grimoire Button */}
+      <div className="fixed top-6 left-6 z-50">
+        <button 
+            onClick={() => setShowGrimoire(true)}
+            className="
+              w-10 h-10 flex items-center justify-center
+              bg-gray-800/50 backdrop-blur-md 
+              rounded-full border border-white/10 
+              hover:bg-blue-500/20 hover:border-blue-400/50 hover:scale-110
+              transition-all duration-300 group cursor-pointer
+            "
+            title="Open Grimoire"
+          >
+            {/* Book Icon */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300 group-hover:text-blue-300">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+        </button>
+      </div>
+
+      {/* 🟢 TOP RIGHT: Trophy & Signout */}
       <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
-        {/* 🏆 Trophy Button */}
+        {/* Trophy Button */}
         <button 
           onClick={fetchLeaderboard}
           className="
@@ -244,7 +269,7 @@ export default function App() {
           <span className="text-xl group-hover:rotate-12 transition-transform">🏆</span>
         </button>
 
-        {/* 🚪 Sign Out Button */}
+        {/* Sign Out Button */}
         <button 
           onClick={handleLogout}
           className="text-xs font-mono text-gray-400 hover:text-red-500 border border-transparent hover:border-red-200 px-3 py-1 rounded-full transition-all"
@@ -255,7 +280,7 @@ export default function App() {
 
       <div className="min-h-screen text-gray-800 flex flex-col items-center justify-between p-6 select-none font-sans relative z-10">
         
-        {/* HEADER (Cleaned up) */}
+        {/* HEADER */}
         <header className="mt-8 text-center pointer-events-none">
           <h1 className="text-4xl font-extralight tracking-[0.2em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
             Neural<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Craft</span>
@@ -294,7 +319,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* 📦 Inventory Grid (DARK SCI-FI MODE) */}
+        {/* 📦 Inventory Grid (Always Visible) */}
         <div className="w-full max-w-3xl mb-6 z-20">
           <div className="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-4 border border-white/10 shadow-2xl shadow-black/50">
             
@@ -375,9 +400,24 @@ export default function App() {
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
+        )}
+
+        {/* 📖 GRIMOIRE MODAL (New!) */}
+        {showGrimoire && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setShowGrimoire(false)}>
+                <div className="w-full max-w-4xl relative animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                    <button 
+                        onClick={() => setShowGrimoire(false)} 
+                        className="absolute top-[-40px] right-0 text-gray-400 hover:text-white text-sm uppercase tracking-widest font-bold"
+                    >
+                        Close Grimoire [X]
+                    </button>
+                    {/* The Grimoire Component */}
+                    <Grimoire inventory={inventory} />
+                </div>
+            </div>
         )}
 
       </div>
