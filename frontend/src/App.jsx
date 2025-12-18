@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DndContext, DragOverlay, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import toast, { Toaster } from 'react-hot-toast'; 
-import { supabase } from './supabaseClient'; // 👈 Import our client
-import { AuthPage } from './components/AuthPage'; // 👈 Import login screen
+import { supabase } from './supabaseClient';
+import { AuthPage } from './components/AuthPage';
 
 import { ElementCard } from './components/ElementCard';
 import { CraftingSlot } from './components/CraftingSlot';
 import { NeuralBackground } from './components/NeuralBackground';
-import { Grimoire } from './components/Grimoire';
+// import { Grimoire } from './components/Grimoire'; // 🟢 Optional: Commented out if you are using the grid below instead
 
 const API_URL = "https://neuralcraft-three.vercel.app";
 
@@ -28,7 +28,7 @@ function playSound(type) {
 }
 
 export default function App() {
-  const [session, setSession] = useState(null); // 👤 Stores User Info
+  const [session, setSession] = useState(null); 
   const [inventory, setInventory] = useState([]); 
   const [isLoading, setIsLoading] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -54,14 +54,13 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. 📦 FETCH INVENTORY (Only if logged in)
+  // 2. 📦 FETCH INVENTORY
   useEffect(() => {
-    if (!session) return; // Don't fetch if no user
+    if (!session) return; 
 
     async function fetchInventory() {
       setIsLoading(true);
       try {
-        // 🟢 USE REAL USER ID FROM SESSION
         const response = await axios.get(`${API_URL}/api/inventory/${session.user.id}`);
         if (Array.isArray(response.data)) {
             setInventory(response.data);
@@ -78,12 +77,12 @@ export default function App() {
     fetchInventory();
   }, [session]);
 
-  // If not logged in, show Login Screen
+  // LOGIN SCREEN
   if (!session) {
     return <AuthPage />;
   }
 
-  // --- GAME LOGIC START ---
+  // --- GAME LOGIC ---
 
   const findItem = (id) => inventory.find((i) => i.id === id);
   const activeItem = findItem(activeId);
@@ -123,7 +122,6 @@ export default function App() {
     });
 
     try {
-      // 🟢 USE REAL USER ID HERE TOO
       const response = await axios.post(`${API_URL}/api/combine`, {
         userId: session.user.id,
         element1Id: slots.slot1.id,
@@ -133,7 +131,7 @@ export default function App() {
       const data = response.data;
       toast.dismiss(loadingToastId);
 
-      // 1. FAIL CASE: Cannot combine
+      // FAIL
       if (data.message && data.message.includes('cannot be combined')) {
         playSound('fail');
         toast.error("Elements refuse to fuse.", {
@@ -142,14 +140,10 @@ export default function App() {
         });
         setSlots({ slot1: null, slot2: null });
       } 
-      // 2. DUPLICATE CASE: Already unlocked (UPDATED) 🟢
+      // DUPLICATE
       else if (data.message && (data.message.includes('already in inventory') || data.message.includes('already owned'))) {
         playSound('duplicate');
-        
-        // Clear slots so they can try again
         setSlots({ slot1: null, slot2: null });
-
-        // Show "Rediscovered" Toast with the image and name
         toast.success(
           <div className="flex flex-col items-center gap-1 text-center">
             <span className="font-bold text-gray-400 text-[10px] uppercase tracking-widest">Rediscovered</span>
@@ -167,15 +161,11 @@ export default function App() {
           {
             duration: 3000,
             icon: '🔄',
-            style: { 
-              background: 'rgba(17, 24, 39, 0.95)', 
-              color: '#fff', 
-              border: '1px solid #4B5563',
-            },
+            style: { background: 'rgba(17, 24, 39, 0.95)', color: '#fff', border: '1px solid #4B5563' },
           }
         );
       }
-      // 3. SUCCESS CASE: New element
+      // SUCCESS
       else {
         const newElement = {
           id: data.elementId,
@@ -200,12 +190,7 @@ export default function App() {
             {
               duration: 5000,
               icon: '🧬',
-              style: { 
-                background: 'rgba(17, 24, 39, 0.95)', 
-                color: '#fff', 
-                border: '1px solid #60A5FA',
-                padding: '16px',
-              },
+              style: { background: 'rgba(17, 24, 39, 0.95)', color: '#fff', border: '1px solid #60A5FA', padding: '16px' },
             }
           );
         } else {
@@ -216,7 +201,6 @@ export default function App() {
           });
         }
       }
-
     } catch (error) {
       toast.dismiss(loadingToastId);
       console.error("Error:", error);
@@ -227,7 +211,6 @@ export default function App() {
     }
   }
 
-  // Handle Logout
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setInventory([]);
@@ -242,12 +225,26 @@ export default function App() {
       onDragEnd={handleDragEnd}
     >
       <Toaster position="top-center" reverseOrder={false} />
-
       <NeuralBackground />
-      <Grimoire inventory={inventory} />
+      
+      {/* 🟢 NAVIGATION: Top Right Controls */}
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
+        {/* 🏆 Trophy Button */}
+        <button 
+          onClick={fetchLeaderboard}
+          className="
+            w-10 h-10 flex items-center justify-center
+            bg-gray-800/50 backdrop-blur-md 
+            rounded-full border border-white/10 
+            hover:bg-yellow-500/20 hover:border-yellow-400/50 hover:scale-110
+            transition-all duration-300 group cursor-pointer
+          "
+          title="Hall of Fame"
+        >
+          <span className="text-xl group-hover:rotate-12 transition-transform">🏆</span>
+        </button>
 
-      {/* 🚪 SIGN OUT BUTTON */}
-      <div className="fixed top-6 right-6 z-50">
+        {/* 🚪 Sign Out Button */}
         <button 
           onClick={handleLogout}
           className="text-xs font-mono text-gray-400 hover:text-red-500 border border-transparent hover:border-red-200 px-3 py-1 rounded-full transition-all"
@@ -258,21 +255,15 @@ export default function App() {
 
       <div className="min-h-screen text-gray-800 flex flex-col items-center justify-between p-6 select-none font-sans relative z-10">
         
+        {/* HEADER (Cleaned up) */}
         <header className="mt-8 text-center pointer-events-none">
-        <h1 className="text-4xl font-extralight tracking-[0.2em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-          Neural<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Craft</span>
-        </h1>
-        <p className="text-xs text-blue-300/60 mt-2 tracking-widest uppercase">
-          Generative Alchemy Engine v1.0
-        </p>
-        {/* 🏆 TROPHY BUTTON */}
-        <button 
-          onClick={fetchLeaderboard}
-          className="absolute top-4 left-4 p-3 bg-gray-800/50 rounded-full border border-white/10 hover:bg-yellow-500/20 hover:border-yellow-400/50 transition-all group"
-        >
-          <span className="text-xl group-hover:scale-110 block transition-transform">🏆</span>
-        </button>
-      </header>
+          <h1 className="text-4xl font-extralight tracking-[0.2em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+            Neural<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Craft</span>
+          </h1>
+          <p className="text-xs text-blue-300/60 mt-2 tracking-widest uppercase">
+            Generative Alchemy Engine v1.0
+          </p>
+        </header>
 
         {/* ⚗️ Synthesis Area */}
         <div className="flex-1 flex items-center justify-center w-full max-w-2xl relative">
@@ -282,16 +273,16 @@ export default function App() {
             <CraftingSlot id="slot1" item={slots.slot1} onClear={clearSlot} />
             
             <div 
-            onClick={handleCombine}
-            className={`
-              w-16 h-16 rounded-full border border-white/10 flex items-center justify-center z-10 transition-all duration-500
-              ${slots.slot1 && slots.slot2 
-                ? 'bg-gradient-to-br from-blue-600 to-purple-700 text-white shadow-[0_0_30px_rgba(59,130,246,0.5)] scale-110 cursor-pointer hover:scale-125' 
-                : 'bg-gray-900/80 text-gray-600 pointer-events-none'
-              }
-              ${isProcessing ? 'animate-pulse bg-blue-500' : ''}
-            `}
-          >
+              onClick={handleCombine}
+              className={`
+                w-16 h-16 rounded-full border border-white/10 flex items-center justify-center z-10 transition-all duration-500
+                ${slots.slot1 && slots.slot2 
+                  ? 'bg-gradient-to-br from-blue-600 to-purple-700 text-white shadow-[0_0_30px_rgba(59,130,246,0.5)] scale-110 cursor-pointer hover:scale-125' 
+                  : 'bg-gray-900/80 text-gray-600 pointer-events-none'
+                }
+                ${isProcessing ? 'animate-pulse bg-blue-500' : ''}
+              `}
+            >
               {isProcessing ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
@@ -351,7 +342,7 @@ export default function App() {
           ) : null}
         </DragOverlay>
 
-        {/* 🏆 LEADERBOARD MODAL (Inserted Here) */}
+        {/* 🏆 LEADERBOARD MODAL */}
         {showLeaderboard && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowLeaderboard(false)}>
             <div className="w-full max-w-md bg-gray-900 border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={e => e.stopPropagation()}>
