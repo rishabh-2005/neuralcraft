@@ -21,34 +21,51 @@ export function ElementCard({ id, name, image, isOverlay, draggable = true }) {
       style={style}
       {...dragProps}
       className={`
-        relative flex flex-col items-center p-2
-        /* 🟢 CHANGED: Width is now dynamic (fills the grid cell) but has a max limit */
+        relative flex flex-col items-center p-2 group
         w-full max-w-[120px] aspect-[4/5]
-        bg-white rounded-xl 
-        shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100
+        /* 🌑 DARK THEME BASE: Dark glass effect */
+        bg-gray-900/40 backdrop-blur-md
+        border border-white/10 rounded-xl 
+        shadow-lg shadow-black/20
         transition-all duration-300
         touch-none select-none
-        ${draggable ? 'cursor-grab active:cursor-grabbing hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:scale-105 hover:border-blue-200' : ''}
-        ${isOverlay ? 'shadow-2xl scale-110 z-50 rotate-2' : ''}
+        
+        /* ✨ HOVER & DRAG EFFECTS */
+        ${draggable ? `
+          cursor-grab active:cursor-grabbing 
+          hover:bg-gray-800/60 
+          hover:border-blue-400/40 
+          hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] 
+          hover:scale-105 
+          hover:-translate-y-1
+        ` : ''}
+
+        /* 🚀 OVERLAY STATE (While Dragging) */
+        ${isOverlay ? 'shadow-[0_0_30px_rgba(59,130,246,0.5)] scale-110 z-50 bg-gray-800 border-blue-400' : ''}
       `}
     >
-      {/* 🟢 CHANGED: Image container is flexible height */}
-      <div className="w-full aspect-square mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden border border-gray-100 relative">
+      {/* 🖼️ IMAGE CONTAINER (Darker well) */}
+      <div className="w-full aspect-square mb-2 bg-black/30 rounded-lg flex items-center justify-center overflow-hidden border border-white/5 relative group-hover:border-white/10 transition-colors">
         {image ? (
           <img 
             src={image} 
             alt={name} 
-            className="w-full h-full object-cover pointer-events-none" 
+            className="w-full h-full object-cover pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity" 
             draggable={false} 
           />
         ) : (
-          <div className="w-1/3 h-1/3 rounded-full border-2 border-gray-200 bg-gray-50" />
+          // Placeholder for missing images
+          <div className="w-1/3 h-1/3 rounded-full border-2 border-gray-700 bg-gray-800/50" />
         )}
       </div>
 
-      <span className="text-[10px] sm:text-xs font-bold text-gray-600 uppercase tracking-wide truncate w-full text-center">
+      {/* 📝 TEXT LABEL (Light gray to glowy blue on hover) */}
+      <span className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wide truncate w-full text-center group-hover:text-blue-200 transition-colors duration-300">
         {name}
       </span>
+      
+      {/* Optional: Tiny tech deco corner */}
+      <div className="absolute top-1 right-1 w-1 h-1 bg-white/10 rounded-full group-hover:bg-blue-400/50 transition-colors" />
     </div>
   );
 }

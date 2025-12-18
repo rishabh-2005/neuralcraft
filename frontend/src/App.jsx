@@ -220,13 +220,13 @@ export default function App() {
       <div className="min-h-screen text-gray-800 flex flex-col items-center justify-between p-6 select-none font-sans relative z-10">
         
         <header className="mt-8 text-center pointer-events-none">
-          <h1 className="text-4xl font-extralight tracking-[0.2em] text-gray-800 uppercase">
-            Neural<span className="font-bold text-gray-900">Craft</span>
-          </h1>
-          <p className="text-xs text-gray-400 mt-2 tracking-widest uppercase">
-            Generative Alchemy Engine v1.0
-          </p>
-        </header>
+        <h1 className="text-4xl font-extralight tracking-[0.2em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+          Neural<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Craft</span>
+        </h1>
+        <p className="text-xs text-blue-300/60 mt-2 tracking-widest uppercase">
+          Generative Alchemy Engine v1.0
+        </p>
+      </header>
 
         {/* ⚗️ Synthesis Area */}
         <div className="flex-1 flex items-center justify-center w-full max-w-2xl relative">
@@ -236,16 +236,16 @@ export default function App() {
             <CraftingSlot id="slot1" item={slots.slot1} onClear={clearSlot} />
             
             <div 
-              onClick={handleCombine}
-              className={`
-                w-14 h-14 rounded-full border-2 flex items-center justify-center z-10 transition-all duration-500
-                ${slots.slot1 && slots.slot2 
-                  ? 'bg-gray-900 border-gray-900 text-white shadow-xl scale-110 cursor-pointer hover:bg-black hover:scale-125' 
-                  : 'bg-white border-gray-200 text-gray-300 pointer-events-none'
-                }
-                ${isProcessing ? 'animate-pulse bg-blue-600 border-blue-600' : ''}
-              `}
-            >
+            onClick={handleCombine}
+            className={`
+              w-16 h-16 rounded-full border border-white/10 flex items-center justify-center z-10 transition-all duration-500
+              ${slots.slot1 && slots.slot2 
+                ? 'bg-gradient-to-br from-blue-600 to-purple-700 text-white shadow-[0_0_30px_rgba(59,130,246,0.5)] scale-110 cursor-pointer hover:scale-125' 
+                : 'bg-gray-900/80 text-gray-600 pointer-events-none'
+              }
+              ${isProcessing ? 'animate-pulse bg-blue-500' : ''}
+            `}
+          >
               {isProcessing ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
@@ -257,29 +257,30 @@ export default function App() {
           </div>
         </div>
 
-        {/* 📦 Inventory Grid (COMPACT) */}
+        {/* 📦 Inventory Grid (DARK SCI-FI MODE) */}
         <div className="w-full max-w-3xl mb-6 z-20">
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl p-4 border border-white shadow-xl shadow-gray-200/50">
+          <div className="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-4 border border-white/10 shadow-2xl shadow-black/50">
             
-            <div className="flex items-center justify-between mb-3 px-2">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+            <div className="flex items-center justify-between mb-3 px-2 border-b border-white/5 pb-2">
+              <span className="text-xs font-bold text-blue-400/80 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"/>
                 Discovery Database
               </span>
-              <span className="text-xs text-gray-400 font-mono">
+              <span className="text-xs text-gray-500 font-mono">
                 {inventory.length} NODES
               </span>
             </div>
             
             {isLoading ? (
-               <div className="flex justify-center items-center h-32 text-gray-400 text-sm animate-pulse">
-                 Connecting...
+               <div className="flex justify-center items-center h-32 text-blue-400/50 text-sm animate-pulse font-mono">
+                 [ ESTABLISHING CONNECTION... ]
                </div>
             ) : (
                <div className="
                  grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 
                  gap-2 p-1
                  overflow-y-auto max-h-[320px] 
-                 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent
+                 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent
                ">
                  {inventory.length > 0 ? inventory.map((item) => (
                    <ElementCard 
@@ -289,8 +290,8 @@ export default function App() {
                      image={item.image} 
                    />
                  )) : (
-                   <div className="col-span-full text-center text-gray-400 py-6">
-                     Inventory Empty.
+                   <div className="col-span-full text-center text-gray-600 py-8 font-mono text-xs">
+                     // DATABASE EMPTY. AWAITING INPUT.
                    </div>
                  )}
                </div>
