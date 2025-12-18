@@ -388,12 +388,12 @@ app.get('/api/inventory/:userId', async (req, res) => {
 });
 
 // Export the app for Vercel
-module.exports = app;
+export default app;
 
 // Only start the server if we are running locally (not on Vercel)
-if (require.main === module) {
+if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running locally on port ${PORT}`);
   });
 }
