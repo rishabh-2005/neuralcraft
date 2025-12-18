@@ -10,7 +10,7 @@ import { CraftingSlot } from './components/CraftingSlot';
 import { NeuralBackground } from './components/NeuralBackground';
 import { Grimoire } from './components/Grimoire';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = "https://neuralcraft-three.vercel.app";
 
 // 🔊 SOUND ENGINE
 function playSound(type) {
