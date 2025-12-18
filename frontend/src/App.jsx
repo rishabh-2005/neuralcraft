@@ -122,21 +122,49 @@ export default function App() {
       const data = response.data;
       toast.dismiss(loadingToastId);
 
+      // 1. FAIL CASE: Cannot combine
       if (data.message && data.message.includes('cannot be combined')) {
         playSound('fail');
         toast.error("Elements refuse to fuse.", {
           icon: '🚫',
           style: { background: '#374151', color: '#fff' },
         });
+        setSlots({ slot1: null, slot2: null });
       } 
+      // 2. DUPLICATE CASE: Already unlocked (UPDATED) 🟢
       else if (data.message && (data.message.includes('already in inventory') || data.message.includes('already owned'))) {
         playSound('duplicate');
-        toast("You already have this element.", {
-          icon: '🎒',
-          style: { background: '#374151', color: '#9CA3AF' },
-        });
+        
+        // Clear slots so they can try again
         setSlots({ slot1: null, slot2: null });
+
+        // Show "Rediscovered" Toast with the image and name
+        toast.success(
+          <div className="flex flex-col items-center gap-1 text-center">
+            <span className="font-bold text-gray-400 text-[10px] uppercase tracking-widest">Rediscovered</span>
+            <div className="flex items-center gap-2 mt-1">
+              {data.imageUrl && (
+                <img 
+                  src={data.imageUrl} 
+                  alt={data.elementName} 
+                  className="w-8 h-8 rounded-md border border-white/20"
+                />
+              )}
+              <span className="capitalize text-blue-200 font-bold text-md">{data.elementName}</span>
+            </div>
+          </div>,
+          {
+            duration: 3000,
+            icon: '🔄',
+            style: { 
+              background: 'rgba(17, 24, 39, 0.95)', 
+              color: '#fff', 
+              border: '1px solid #4B5563',
+            },
+          }
+        );
       }
+      // 3. SUCCESS CASE: New element
       else {
         const newElement = {
           id: data.elementId,
