@@ -113,7 +113,7 @@ export default function App() {
 
     try {
       // 🟢 USE REAL USER ID HERE TOO
-      const response = await axios.post('http://localhost:3000/api/combine', {
+      const response = await axios.post(`${API_URL}/api/combine`, {
         userId: session.user.id,
         element1Id: slots.slot1.id,
         element2Id: slots.slot2.id
