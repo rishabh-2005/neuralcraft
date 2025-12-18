@@ -61,7 +61,7 @@ export async function checkSimilarity(supabase, candidateName) {
   // Search Supabase for neighbors
   const { data: similarElements, error } = await supabase.rpc('match_elements', {
     query_embedding: vector,
-    match_threshold: 0.80, // Strictness (0.90 - 0.95 is good)
+    match_threshold: 0.90, // Strictness (0.90 - 0.95 is good)
     match_count: 1
   });
 

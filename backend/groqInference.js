@@ -31,8 +31,8 @@ Your goal is to combine two input elements into a single, logical, and creative 
 User: "Fire" + "Water"
 AI: { "name": "Steam"}
 
-User: "Earth" + "Water"
-AI: { "name": "Mud"}
+User: "Stone" + "Fire"
+AI: { "name": "Metal"}
 
 User: "Sandwich" + "Nuclear Bomb"
 AI: { "name": "NONE" }
@@ -76,7 +76,7 @@ export async function combine(itemA, itemB) {
         }
       ],
       model: "llama-3.1-8b-instant",
-      temperature: 0.5,
+      temperature: 0.7,
       response_format: { type: "json_object" }
     });
 
