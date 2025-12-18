@@ -10,7 +10,11 @@ import { generateImage } from './zturboinference.js';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ["https://neuralcraft-g9ty.vercel.app", "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
