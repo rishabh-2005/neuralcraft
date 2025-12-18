@@ -31,7 +31,8 @@ export default function App() {
   const [session, setSession] = useState(null); // 👤 Stores User Info
   const [inventory, setInventory] = useState([]); 
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState([]);
   const [slots, setSlots] = useState({ slot1: null, slot2: null });
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeId, setActiveId] = useState(null);
@@ -101,6 +102,16 @@ export default function App() {
 
   function clearSlot(slotId) {
     setSlots((prev) => ({ ...prev, [slotId]: null }));
+  }
+
+  async function fetchLeaderboard() {
+    try {
+      const res = await axios.get(`${API_URL}/api/leaderboard`);
+      setLeaderboardData(res.data);
+      setShowLeaderboard(true);
+    } catch (err) {
+      toast.error("Could not load Hall of Fame");
+    }
   }
 
   async function handleCombine() {
@@ -254,6 +265,13 @@ export default function App() {
         <p className="text-xs text-blue-300/60 mt-2 tracking-widest uppercase">
           Generative Alchemy Engine v1.0
         </p>
+        {/* 🏆 TROPHY BUTTON */}
+        <button 
+          onClick={fetchLeaderboard}
+          className="absolute top-4 left-4 p-3 bg-gray-800/50 rounded-full border border-white/10 hover:bg-yellow-500/20 hover:border-yellow-400/50 transition-all group"
+        >
+          <span className="text-xl group-hover:scale-110 block transition-transform">🏆</span>
+        </button>
       </header>
 
         {/* ⚗️ Synthesis Area */}
@@ -332,6 +350,44 @@ export default function App() {
             <ElementCard id={activeItem.id} name={activeItem.name} image={activeItem.image} isOverlay={true} />
           ) : null}
         </DragOverlay>
+
+        {/* 🏆 LEADERBOARD MODAL (Inserted Here) */}
+        {showLeaderboard && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowLeaderboard(false)}>
+            <div className="w-full max-w-md bg-gray-900 border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={e => e.stopPropagation()}>
+              
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 uppercase tracking-widest">
+                  Hall of Fame
+                </h2>
+                <button onClick={() => setShowLeaderboard(false)} className="text-gray-500 hover:text-white">✕</button>
+              </div>
+
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-700">
+                {leaderboardData.map((player, index) => (
+                  <div key={index} className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-gray-800/50 border-white/5'}`}>
+                    <div className="flex items-center gap-4">
+                      <span className={`font-mono font-bold text-lg w-6 text-center ${index === 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
+                        #{index + 1}
+                      </span>
+                      <div className="flex flex-col">
+                        <span className={`font-bold ${index === 0 ? 'text-white' : 'text-gray-300'}`}>
+                          {player.username}
+                        </span>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-wider">Alchemist</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 bg-black/30 px-3 py-1 rounded-full border border-white/5">
+                      <span className="text-blue-400 font-mono font-bold">{player.score}</span>
+                      <span className="text-xs text-gray-600">NODES</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          </div>
+        )}
 
       </div>
     </DndContext>

@@ -387,6 +387,37 @@ app.get('/api/inventory/:userId', async (req, res) => {
     }
 });
 
+// 🏆 GET LEADERBOARD
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    // 1. Get top 10 users with most inventory items
+    // (This is a simplified count query)
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
+        username,
+        avatar_url,
+        inventory:inventory(count)
+      `)
+      .order('inventory(count)', { ascending: false }) // Sort by most items
+      .limit(10); // Top 10
+
+    if (error) throw error;
+
+    // 2. Format the data nicely for frontend
+    const leaderboard = data.map(user => ({
+      username: user.username || "Anonymous Alchemist",
+      score: user.inventory[0].count // The count comes back as an array
+    })).sort((a, b) => b.score - a.score); // Double check sort
+
+    res.json(leaderboard);
+
+  } catch (error) {
+    console.error('Leaderboard error:', error);
+    res.status(500).json({ error: 'Failed to fetch leaderboard' });
+  }
+});
+
 // Export the app for Vercel
 export default app;
 
