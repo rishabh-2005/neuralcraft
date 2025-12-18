@@ -383,5 +383,13 @@ app.get('/api/inventory/:userId', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`NeuralCraft Server running on port ${PORT}`));
+// Export the app for Vercel
+module.exports = app;
+
+// Only start the server if we are running locally (not on Vercel)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
