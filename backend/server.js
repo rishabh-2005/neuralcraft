@@ -348,43 +348,65 @@ app.post('/api/combine', async (req, res) => {
     }
 });
 
+// 📦 GET INVENTORY (Updated with Auto-Gift Logic)
 app.get('/api/inventory/:userId', async (req, res) => {
-    const { userId } = req.params;
-    try {
-        // 1. Get all element IDs the user owns
-        const { data: inventoryData, error: invError } = await supabase
-            .from('inventory')
-            .select('element_id')
-            .eq('user_id', userId);
-        
-        if (invError) throw invError;
-        
-        // If empty, return empty array
-        if (!inventoryData || inventoryData.length === 0) return res.json([]);
+  const { userId } = req.params;
+  try {
+    // 1. Fetch their current inventory
+    let { data: inventory, error } = await supabase
+      .from('inventory')
+      .select('element_id, elements(*)')
+      .eq('user_id', userId);
 
-        // Extract IDs: [1, 2, 5, 8]
-        const elementIds = inventoryData.map(item => item.element_id);
+    if (error) throw error;
 
-        // 2. Fetch details (Name, Image) for these IDs
-        const { data: elementsData, error: elemError } = await supabase
-            .from('elements')
-            .select('id, name, image_url')
-            .in('id', elementIds);
-            
-        if (elemError) throw elemError;
+    // 2. 🎁 CHECK: Is it empty? If so, give them the Starter Pack!
+    if (!inventory || inventory.length === 0) {
+      console.log(`New user detected (${userId}). Gifting starter pack...`);
 
-        // 3. Format matches Frontend expectation
-        const formattedInventory = elementsData.map(e => ({
-            id: e.id,
-            name: e.name,
-            image: e.image_url
+      // Find the IDs for Fire, Water, Earth, Air
+      const { data: baseElements } = await supabase
+        .from('elements')
+        .select('id')
+        .in('name', ['Fire', 'Water', 'Earth', 'Air']);
+
+      if (baseElements && baseElements.length > 0) {
+        // Prepare the items
+        const newItems = baseElements.map(el => ({
+          user_id: userId,
+          element_id: el.id
         }));
 
-        res.json(formattedInventory);
-    } catch (error) {
-        console.error("Fetch Inventory Error:", error);
-        res.status(500).json({ error: error.message });
+        // Insert them into the inventory
+        const { error: insertError } = await supabase
+            .from('inventory')
+            .insert(newItems);
+        
+        if (!insertError) {
+             // 3. Re-fetch the inventory so they see items immediately
+            const { data: refreshedInventory } = await supabase
+            .from('inventory')
+            .select('element_id, elements(*)')
+            .eq('user_id', userId);
+            
+            inventory = refreshedInventory;
+        }
+      }
     }
+
+    // 3. Send the data to the frontend
+    const formattedInventory = inventory.map(item => ({
+      id: item.elements?.id,
+      name: item.elements?.name,
+      image: item.elements?.image_url
+    }));
+
+    res.json(formattedInventory);
+
+  } catch (error) {
+    console.error('Inventory error:', error);
+    res.status(500).json({ error: 'Failed to fetch inventory' });
+  }
 });
 
 // 🏆 GET LEADERBOARD
