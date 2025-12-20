@@ -1,20 +1,20 @@
-# 🧪 NeuralCraft: Generative Alchemy Engine
+# NeuralCraft: Generative Alchemy Engine
 
 > **"Generative Alchemy powered by Large Language Models, Vector Search, and AI Image Generation."**
 
 NeuralCraft is an infinite crafting game where players combine elements to create new ones. Unlike traditional alchemy games with hardcoded recipes, NeuralCraft uses **Generative AI (Groq/LLaMA 3.1)** to determine the result of every combination in real-time, **Vector Embeddings (MiniLM + Supabase pgvector)** to ensure semantic deduplication, and **AI Image Generation (Z-image turbo via FAL API)** to visualize each discovery with unique artwork.
 
-## 🚀 Features
+## Features
 
-* **🤖 LLM-Powered Synthesis:** Element combinations are determined by LLaMA 3.1-8b-instant. Fire + Earth = Lava because the AI understands physics, not because it was programmed to.
-* **🧠 Vector Semantic Memory:** Uses MiniLM embeddings stored in **Supabase pgvector**. The system recognizes that "Rock" and "Stone" are semantically similar, preventing duplicate discoveries.
-* **🎨 AI-Generated Imagery:** Every new element is visualized using **Z-image turbo** via the **FAL API**, creating unique, contextual artwork for each discovery.
-* **🖱️ Drag-and-Drop Interface:** Smooth, tactile interactions powered by `@dnd-kit`.
-* **🏆 Global Leaderboard:** Real-time Hall of Fame tracking the top 10 alchemists by element count.
-* **📖 The Grimoire:** A searchable library of all elements you've personally unlocked.
-* **🔐 Authentication:** Secure user management with Supabase Auth.
+* **LLM-Powered Synthesis:** Element combinations are determined by LLaMA 3.1-8b-instant. Fire + Earth = Lava because the AI understands physics, not because it was programmed to.
+* **Vector Semantic Memory:** Uses MiniLM embeddings stored in **Supabase pgvector**. The system recognizes that "Rock" and "Stone" are semantically similar, preventing duplicate discoveries.
+* **AI-Generated Imagery:** Every new element is visualized using **Z-image turbo** via the **FAL API**, creating unique, contextual artwork for each discovery.
+* **Drag-and-Drop Interface:** Smooth, tactile interactions powered by `@dnd-kit`.
+* **Global Leaderboard:** Real-time Hall of Fame tracking the top 10 alchemists by element count.
+* **The Grimoire:** A searchable library of all elements you've personally unlocked.
+* **Authentication:** Secure user management with Supabase Auth.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 * **Framework:** React (Vite)
@@ -30,11 +30,11 @@ NeuralCraft is an infinite crafting game where players combine elements to creat
 * **AI Inference:** Groq API (LLaMA 3.1-8b-instant)
 * **Image Generation:** FAL API (Z-image turbo)
 
-## 🎨 Pipeline
+## Pipeline
 
 ![Banner](./workflow.jpeg)
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 ```bash
@@ -171,7 +171,7 @@ insert into elements (name, image_url, discovered_by) values
   ('Air', 'https://placeholder-for-air-image.png', null);
 ```
 
-## 🏃‍♂️ Running the Project
+## Running the Project
 
 Start Backend:
 
@@ -189,7 +189,7 @@ npm run dev
 
 Open http://localhost:5173 to start crafting!
 
-## 🧪 How It Works (The Complete Workflow)
+## How It Works (The Complete Workflow)
 
 ### 1. **User Authentication**
 Player signs in using **Supabase Auth**. Upon first login, they automatically receive the 4 base elements: **Fire, Water, Earth, and Air**.
@@ -225,6 +225,3 @@ A personal collection of all elements the user has unlocked. Searchable and filt
 
 ### 8. **Global Leaderboard**
 Displays the **top 10 users** ranked by the total number of unique elements they've discovered. Updated in real-time via SQL views.
-
-## 📄 License
-This project is open-source and available under the MIT License.
