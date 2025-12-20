@@ -1,6 +1,5 @@
 # 🧪 NeuralCraft: Generative Alchemy Engine
 
-![NeuralCraft Banner](https://via.placeholder.com/1200x400.png?text=NeuralCraft+Banner+Placeholder)
 > **"Generative Alchemy powered by Large Language Models, Vector Search, and AI Image Generation."**
 
 NeuralCraft is an infinite crafting game where players combine elements to create new ones. Unlike traditional alchemy games with hardcoded recipes, NeuralCraft uses **Generative AI (Groq/LLaMA 3.1)** to determine the result of every combination in real-time, **Vector Embeddings (MiniLM + Supabase pgvector)** to ensure semantic deduplication, and **AI Image Generation (Z-image turbo via FAL API)** to visualize each discovery with unique artwork.
@@ -30,6 +29,10 @@ NeuralCraft is an infinite crafting game where players combine elements to creat
 * **Vector Search:** pgvector + MiniLM embeddings
 * **AI Inference:** Groq API (LLaMA 3.1-8b-instant)
 * **Image Generation:** FAL API (Z-image turbo)
+
+## 🎨 Pipeline
+
+![Banner](./workflow.jpeg)
 
 ## 📦 Installation & Setup
 
@@ -222,22 +225,6 @@ A personal collection of all elements the user has unlocked. Searchable and filt
 
 ### 8. **Global Leaderboard**
 Displays the **top 10 users** ranked by the total number of unique elements they've discovered. Updated in real-time via SQL views.
-
-## 🎨 Image Generation Pipeline
-
-```mermaid
-graph LR
-    A[New Element Generated] --> B[FAL API Call]
-    B --> C[Z-image turbo Model]
-    C --> D[Image URL Returned]
-    D --> E[Stored in Database]
-    E --> F[Displayed to User]
-```
-
-The image generation is fully automated and integrated into the discovery workflow. Every new element gets a unique, AI-generated illustration that reflects its name and properties.
-
-## 🤝 Contributing
-Contributions are welcome! Please open an issue or submit a pull request.
 
 ## 📄 License
 This project is open-source and available under the MIT License.
